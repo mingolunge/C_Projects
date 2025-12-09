@@ -33,8 +33,9 @@ int main(void)
     //SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 	SetConfigFlags(FLAG_WINDOW_TRANSPARENT);
     InitWindow(screenWidth, screenHeight, "gravity sim");
-    SetTargetFPS(300);
+    SetTargetFPS(30);
     /////////////////////////////////////////////////////////////////////////////////
+    
 	Planet c = {{600, 600}, {0,100}, 500, 50};
     Planet a = {{200, 50}, {100, -40}, 350, 35};
     Planet b = {{500, 300}, {10,20}, 400, 40};
