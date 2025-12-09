@@ -1,13 +1,30 @@
 #include "raylib.h"
 #include "math.h"
 
+
+float distance;
+Vector2 dir;
+
 typedef struct{
     Vector2 pos;
     Vector2 vel;
-    float mass;
-    float pull;
+    float m;
     float r;
 } Planet;
+
+Planet get_vector(Planet a, Planet b){
+	dir.x = b.pos.x - a.pos.x;
+	dir.y = b.pos.y - a.pos.y;
+
+	distance = sqrtf(dir.x*dir.x + dir.y*dir.y);
+
+	Vector2 dir_norm = { dir.x / distance, dir.y / distance };
+	a.vel.x += dir_norm.x * a.m * GetFrameTime();
+	a.vel.y += dir_norm.y * a.m * GetFrameTime();
+	a.pos.x += a.vel.x * GetFrameTime();
+	a.pos.y += a.vel.y * GetFrameTime();
+	return a;
+}
 
 int main(void)
 {
@@ -15,18 +32,20 @@ int main(void)
     int screenHeight = 720;//GetScreenHeight();
     //SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 	SetConfigFlags(FLAG_WINDOW_TRANSPARENT);
-    InitWindow(screenWidth, screenHeight, "raylib - gravity bouncing ball");
-    SetTargetFPS(60);
+    InitWindow(screenWidth, screenHeight, "gravity sim");
+    SetTargetFPS(300);
     /////////////////////////////////////////////////////////////////////////////////
+	Planet c = {{600, 600}, {0,100}, 500, 50};
+    Planet a = {{200, 50}, {100, -40}, 350, 35};
+    Planet b = {{500, 300}, {10,20}, 400, 40};
 
-    Planet a = {{200, 50}, {100, -40}, 5, 200, 20};
-    Planet b = {{500, 300}, {10,20}, 5, 5000000000000, 10};
-    Vector2 dir;
-    float distance;
     bool dragging = false;
 
     while (!WindowShouldClose())
     {
+    	if (IsKeyDown(KEY_Q)){
+    		CloseWindow();
+    	}
     	screenWidth = 1280;//GetScreenWidth();
     	screenHeight = 720;//GetScreenHeight();
     	Vector2 mousePos = GetMousePosition();
@@ -42,22 +61,20 @@ int main(void)
     	if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
     		dragging = false;
     	}
-        
-        dir.x = b.pos.x - a.pos.x;
-        dir.y = b.pos.y - a.pos.y;
 
-        distance = sqrtf(dir.x*dir.x + dir.y*dir.y);
+		a = get_vector(a, b);
+		a = get_vector(a, c);
+		b = get_vector(b, a);
+		b = get_vector(b, c);
+		c = get_vector(c, b);
+		c = get_vector(c, a);
 
-        Vector2 dir_norm = { dir.x / distance, dir.y / distance };
-        a.vel.x += dir_norm.x * a.pull * GetFrameTime();
-        a.vel.y += dir_norm.y * a.pull * GetFrameTime();
-		a.pos.x += a.vel.x * GetFrameTime();
-		a.pos.y += a.vel.y * GetFrameTime();
         // --- DRAW ---
         BeginDrawing();
             ClearBackground(BLANK);
-            DrawCircle(a.pos.x, a.pos.y, a.r, GREEN);
-            DrawCircle(b.pos.x, b.pos.y, b.r, RED);
+            DrawCircleGradient(a.pos.x, a.pos.y, a.r, GREEN, BLANK);
+            DrawCircleGradient(b.pos.x, b.pos.y, b.r, RED, BLANK);
+            DrawCircleGradient(c.pos.x, c.pos.y, c.r, PURPLE, BLANK);
         EndDrawing();
     }
 
