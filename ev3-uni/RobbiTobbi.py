@@ -6,15 +6,14 @@ from ev3dev2.sound import Sound
 import math
 from time import sleep
 
-
 drive = MoveTank(OUTPUT_A, OUTPUT_B)    # Motorsteuerung
+us = UltrasonicSensor(INPUT_2)    
 ls1 = LightSensor(INPUT_1)              # linker Lichtsensor
 ls2 = LightSensor(INPUT_3)              # mittlerer Lichtsensor
-ls3 = LightSensor(INPUT_4)
-us = UltrasonicSensor(INPUT_2)          # rechter Lichtsensor
-last_action = None                      # letzte Fahraktion
-active = True
+ls3 = LightSensor(INPUT_4)              # rechter Lichtsensor
 sound = Sound()
+last_action = ""                        # letzte Fahraktion
+active = True
 
 
 def wenden():  # Wenden
@@ -42,7 +41,6 @@ def left():  # Linkskurve
     drive.on(SpeedPercent(0), SpeedPercent(-wenden_speed))
 
 
-# sound.play_file('runnin.wav', play_type=Sound.PLAY_NO_WAIT_FOR_COMPLETE)
 def compare(l, m, r, d, t=5):
     avg = (l + m + r) / 3
     if math.isclose(l, m, abs_tol=5) and math.isclose(m, r, abs_tol=5):
@@ -63,8 +61,6 @@ def compare(l, m, r, d, t=5):
         return "right"
     return None
 
-
-last_action = ""
 
 
 def interpret(x: str):
@@ -97,8 +93,8 @@ def interpret(x: str):
             forward(speed)
 
 
-speed = 70
-wenden_speed = 50
+speed = 100
+wenden_speed = 60
 
 
 while active:
@@ -106,6 +102,5 @@ while active:
     m = ls2.reflected_light_intensity * 1.1
     l = ls3.reflected_light_intensity
     d = us.distance_centimeters - 4
-
     wert = compare(l, m, r, d)
     interpret(wert)
