@@ -7,7 +7,7 @@ import math
 from time import sleep
 
 drive = MoveTank(OUTPUT_A, OUTPUT_B)    # Motorsteuerung
-arm = LargeMotor(OUTPUT_C)              # arm
+#arm = LargeMotor(OUTPUT_C)              # arm
 us = UltrasonicSensor(INPUT_2)    
 ls1 = LightSensor(INPUT_1)              # linker Lichtsensor
 ls2 = LightSensor(INPUT_3)              # mittlerer Lichtsensor
@@ -17,6 +17,7 @@ last_action = ""                        # letzte Fahraktion
 active = True
 speed = 100
 wenden_speed = 60
+middle_val = (ls1.reflected_light_intensity + ls2.reflected_light_intensity) / 2  # Initialisierung von middle value weil wir davor 40 hatten
 
 
 def wenden():  # Wenden
@@ -48,9 +49,9 @@ def compare(l, m, r, d, t=5):
     avg = (l + m + r) / 3
     if math.isclose(l, m, abs_tol=5) and math.isclose(m, r, abs_tol=5):
         if d < 20:
-            if avg >= 40:
+            if avg >= middle_val:
                 return "wenden"
-            if avg < 40:
+            if avg < middle_val:
                 return "ziel"
             else:
                 pass
@@ -87,7 +88,7 @@ def interpret(x: str):
     elif x == "wenden":
         wenden()
         last_action = "forward"
-    elif x == "panic":
+    else:
         if last_action == "right":
             right()
         elif last_action == "left":
