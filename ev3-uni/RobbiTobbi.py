@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from ev3dev2.motor import OUTPUT_A, OUTPUT_B, SpeedPercent, MoveTank
+from ev3dev2.motor import OUTPUT_A, OUTPUT_B, SpeedPercent, MoveTank, LargeMotor
 from ev3dev2.sensor import INPUT_1, INPUT_2, INPUT_3, INPUT_4
 from ev3dev2.sensor.lego import LightSensor, UltrasonicSensor
 from ev3dev2.sound import Sound
@@ -7,6 +7,7 @@ import math
 from time import sleep
 
 drive = MoveTank(OUTPUT_A, OUTPUT_B)    # Motorsteuerung
+arm = LargeMotor(OUTPUT_C)              # arm
 us = UltrasonicSensor(INPUT_2)    
 ls1 = LightSensor(INPUT_1)              # linker Lichtsensor
 ls2 = LightSensor(INPUT_3)              # mittlerer Lichtsensor
@@ -14,6 +15,8 @@ ls3 = LightSensor(INPUT_4)              # rechter Lichtsensor
 sound = Sound()
 last_action = ""                        # letzte Fahraktion
 active = True
+speed = 100
+wenden_speed = 60
 
 
 def wenden():  # Wenden
@@ -91,10 +94,6 @@ def interpret(x: str):
             left()
         if last_action == "forward":
             forward(speed)
-
-
-speed = 100
-wenden_speed = 60
 
 
 while active:
