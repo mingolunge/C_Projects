@@ -21,15 +21,16 @@ middle_val = (ls1.reflected_light_intensity + ls2.reflected_light_intensity) / 2
 
 
 def wenden():  # Wenden
-    drive.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 1) # Rückwärts
+    # drive.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 1) # Rückwärts
     drive.on(SpeedPercent(-50), SpeedPercent(50))  # 180° drehen
+    sleep(2)
 
 
 def ziel():  # Ziel- Melodie abspielen
     global active
     drive.off() # anhalten
     # Hier noch einbauen dass er winkt und sich dreht
-    sound.play_file("sound.wav", volume=100)#, play_type=Sound.PLAY_NO_WAIT_FOR_COMPLETE)
+    # sound.play_file("sound.wav", volume=100)#, play_type=Sound.PLAY_NO_WAIT_FOR_COMPLETE)
     active = False  # Stoppt die  main while loop
 
 
@@ -49,7 +50,7 @@ def compare(l, m, r, d, t=5):
     avg = (l + m + r) / 3
     if math.isclose(l, m, abs_tol=5) and math.isclose(m, r, abs_tol=5):
         if d < 20:
-            if avg >= middle_val:
+            if avg >= middle_val - t:
                 return "wenden"
             if avg < middle_val:
                 return "ziel"
@@ -97,7 +98,7 @@ def interpret(x: str):
             forward(speed)
 
 
-while active:
+while True:
     r = ls1.reflected_light_intensity / 1.2
     m = ls2.reflected_light_intensity * 1.1
     l = ls3.reflected_light_intensity
