@@ -21,7 +21,7 @@ middle_val = (ls1.reflected_light_intensity + ls2.reflected_light_intensity) / 2
 
 
 def wenden():  # Wenden
-    # drive.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 1) # Rückwärts
+    drive.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 1) # Rückwärts
     drive.on(SpeedPercent(-50), SpeedPercent(50))  # 180° drehen
     sleep(2)
 
